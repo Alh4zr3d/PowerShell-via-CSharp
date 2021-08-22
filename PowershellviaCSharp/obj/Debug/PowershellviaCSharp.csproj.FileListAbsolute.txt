@@ -1,0 +1,11 @@
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\PowershellviaCSharp.exe.config
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\PowershellviaCSharp.exe
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\PowershellviaCSharp.pdb
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\System.Management.Automation.dll
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\obj\Debug\PowershellviaCSharp.csprojAssemblyReference.cache
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\obj\Debug\PowershellviaCSharp.csproj.CoreCompileInputs.cache
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\obj\Debug\PowershellviaCSharp.csproj.CopyComplete
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\obj\Debug\PowershellviaCSharp.exe
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\obj\Debug\PowershellviaCSharp.pdb
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\Mono.Options.dll
+C:\Users\Alh4zr3d\Desktop\Projects\Powershell-via-CSharp\PowershellviaCSharp\bin\Debug\Mono.Options.pdb

@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Collections.Generic;
+using System.Linq;
+using Mono.Options;
 using System.IO;
 
 namespace CMLExecutor
@@ -59,6 +62,47 @@ namespace CMLExecutor
         }
         static void Main(string[] args)
         {
+            bool show_help = false;
+            string cmd = null;
+
+            var options = new OptionSet()
+            {
+                "Usafe: PowershellviaCSharp.exe [OPTIONS]",
+                "Cthulhu fhtagn",
+                "If no -c argument is specified, interactive mode is triggered.",
+                "",
+                "Options:",
+                { "c|command=", "The command to be executed.", v => cmd = v },
+                { "h|help", "show this message and exit", v => show_help = v != null },
+            };
+
+            List<string> extra;
+
+            try
+            {
+                extra = options.Parse(args);
+            }
+            catch (OptionException e)
+            {
+                Console.Write("PowershellviaCSharp: ");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Try `PowershellviaCSharp --help' for more information.");
+                return;
+            }
+
+            if (extra.Any())
+            {
+                foreach (var item in extra)
+                    Console.WriteLine("Unrecognized Option: {0}", item);
+                show_help = true;
+            }
+
+            if (show_help)
+            {
+                options.WriteOptionDescriptions(Console.Out);
+                return;
+            }
+
             Runspace run = RunspaceFactory.CreateRunspace();
             run.Open();
 
@@ -70,45 +114,76 @@ namespace CMLExecutor
             /*shell.AddCommand("Import-Module").AddArgument(@"C:\Program Files\PowerView.ps1");
             shell.Invoke();*/
 
-            var running = true;
-
-            while (running)
+            if (cmd != null)
             {
-                string cmd = Console.ReadLine();
-                if (cmd != "exit")
-                {
-                    var command = cmd;
-                    if (cmd.StartsWith("file:"))
-                    {
-                        command = File.ReadAllText(cmd.Replace("file:", ""));
-                        Console.WriteLine(command);
-                    }
-                    try
-                    {
-                        shell.AddScript(command);
-                        Collection<PSObject> output = shell.Invoke();
-                        Console.WriteLine("Command Output ----- ");
-                        foreach (PSObject o in output)
-                        {
-                            Console.WriteLine(o.ToString());
-                        }
 
-                        foreach (ErrorRecord err in shell.Streams.Error)
-                        {
-                            Console.Write("Error: " + err.ToString());
-                        }
-                        Console.WriteLine("Enter New Command: ");
-                    }
-                    catch (Exception e)
+                var command = cmd;
+                if (cmd.StartsWith("file:"))
+                {
+                    command = File.ReadAllText(cmd.Replace("file:", ""));
+                    Console.WriteLine(command);
+                }
+                try
+                {
+                    shell.AddScript(command);
+                    Collection<PSObject> output = shell.Invoke();
+                    Console.WriteLine("Command Output ----- ");
+                    foreach (PSObject o in output)
                     {
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(o.ToString());
+                    }
+
+                    foreach (ErrorRecord err in shell.Streams.Error)
+                    {
+                        Console.Write("Error: " + err.ToString());
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    running = false;
+                    Console.WriteLine(e.StackTrace);
                 }
+            }
+            else
+            {
+                var running = true;
+                while (running)
+                {
+                    cmd = Console.ReadLine();
+                    if (cmd != "exit")
+                    {
+                        var command = cmd;
+                        if (cmd.StartsWith("file:"))
+                        {
+                            command = File.ReadAllText(cmd.Replace("file:", ""));
+                            Console.WriteLine(command);
+                        }
+                        try
+                        {
+                            shell.AddScript(command);
+                            Collection<PSObject> output = shell.Invoke();
+                            Console.WriteLine("Command Output ----- ");
+                            foreach (PSObject o in output)
+                            {
+                                Console.WriteLine(o.ToString());
+                            }
 
+                            foreach (ErrorRecord err in shell.Streams.Error)
+                            {
+                                Console.Write("Error: " + err.ToString());
+                            }
+                            Console.WriteLine("Enter New Command: ");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.StackTrace);
+                        }
+                    }
+                    else
+                    {
+                        running = false;
+                    }
+
+                }
             }
             run.Close();
         }
